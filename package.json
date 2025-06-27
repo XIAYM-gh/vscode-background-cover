@@ -2,10 +2,10 @@
     "name": "background-cover",
     "displayName": "background-cover",
     "description": "Add a picture you like to cover the entire vscode background. / 添加你喜欢的图片覆盖整个vscode背景",
-    "version": "2.7.0",
-    "publisher": "manasxx",
+    "version": "2.7.0+patch.1",
+    "publisher": "xiaym-gh",
     "engines": {
-        "vscode": "^1.38.0"
+        "vscode": "^1.101.0"
     },
     "one_title": true,
     "icon": "resources/background-cover.png",
@@ -41,22 +41,6 @@
             {
                 "command": "extension.backgroundCover.nest",
                 "title": "backgroundCover - nest"
-            },
-            {
-                "command": "backgroundCover.refreshEntry",
-                "title": "刷新",
-                "icon": {
-                    "light": "resources/light/refresh.svg",
-                    "dark": "resources/dark/refresh.svg"
-                }
-            },
-            {
-                "command": "backgroundCover.home",
-                "title": "首页",
-                "icon": {
-                    "light": "resources/light/home.svg",
-                    "dark": "resources/dark/home.svg"
-                }
             }
         ],
         "keybindings": [
@@ -73,14 +57,14 @@
                     "maximum": 0.8,
                     "minimum": 0,
                     "default": 0.2,
-                    "description": "Background opacity (0 - 0.8) / 背景透明度(0 - 0.8)"
+                    "description": "Background opacity / 背景透明度 (0 - 0.8)"
                 },
                 "backgroundCover.blur": {
                     "type": "number",
                     "maximum": 100,
                     "minimum": 0,
                     "default": 0,
-                    "description": "Background blur (0 - 100) / 背景模糊(0 - 100)"
+                    "description": "Background blur strength / 背景模糊强度 (0 - 100)"
                 },
                 "backgroundCover.imagePath": {
                     "type": "string",
@@ -90,12 +74,12 @@
                 "backgroundCover.randomImageFolder": {
                     "type": "string",
                     "default": "",
-                    "description": "Background image's folder path for random / 图片目录"
+                    "description": "Random images folder / 图片目录"
                 },
                 "backgroundCover.autoStatus": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Automatically change background each time you start / 每次启动时随机自动更换背景"
+                    "description": "Automatically change on start / 每次启动时随机自动更换背景"
                 },
                 "backgroundCover.sizeModel": {
                     "type": "string",
@@ -112,7 +96,7 @@
                         "not_bottom"
                     ],
                     "default": "cover",
-                    "description": "Background image size adaptive mode / 图片尺寸适应模式"
+                    "description": "Image size adaptive mode / 图片尺寸适应模式"
                 },
                 "backgroundCover.blendModel": {
                     "type": "string",
@@ -122,12 +106,7 @@
                         "lighten"
                     ],
                     "default": "cover",
-                    "description": "Background image blend mode / 图片文字混合模式，对应主题模式"
-                },
-                "backgroundCover.defaultOnlinePage": {
-                    "type": "string",
-                    "default": "https://vs.20988.xyz/d/24-vscodebei-jing-tu-tu-ku",
-                    "description": "Online images default page / 在线图库默认页面"
+                    "description": "Image blend mode / 图片文字混合模式，对应主题模式"
                 }
             }
         },
@@ -137,29 +116,6 @@
                     "id": "backgroundCover-explorer",
                     "title": "backgroundCover",
                     "icon": "resources/big.svg"
-                }
-            ]
-        },
-        "views": {
-            "backgroundCover-explorer": [
-                {
-                    "id": "backgroundCover.readerView",
-                    "type": "webview",
-                    "name": "backgroundCover"
-                }
-            ]
-        },
-        "menus": {
-            "view/title": [
-                {
-                    "command": "backgroundCover.refreshEntry",
-                    "when": "view == backgroundCover.readerView",
-                    "group": "navigation@1"
-                },
-                {
-                    "command": "backgroundCover.home",
-                    "when": "view == backgroundCover.readerView",
-                    "group": "navigation@0"
                 }
             ]
         }
@@ -176,23 +132,21 @@
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "vscode:uninstall": "node ./out/uninstall",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test",
-        "check": "tslint -p ./"
+        "compile": "tsup",
+        "watch": "tsup --watch"
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
         "@types/lockfile": "^1.0.4",
         "@types/mocha": "^5.2.7",
-        "@types/node": "^22.9.0",
-        "@types/vscode": "^1.30.0",
-        "@vscode/test-electron": "^2.3.2",
-        "typescript": "^4.5.4"
+        "@types/node": "^22.15.33",
+        "@types/vscode": "^1.101.0",
+        "tsup": "^8.5.0",
+        "typescript": "^4.9.5"
     },
     "dependencies": {
         "async-mutex": "^0.5.0",
-        "fs-extra": "^11.2.0",
+        "fs-extra": "^11.3.0",
         "lockfile": "^1.0.4",
         "sudo-prompt": "^9.2.1"
     }

@@ -1,14 +1,12 @@
-
 import { window, ColorThemeKind } from 'vscode';
 
 const bleandHelper = {
-
 	autoBlendModel(): string {
 		let blendStr = '';
 		let themeKind = window.activeColorTheme.kind;
-		if ( themeKind === ColorThemeKind.Dark ) {
+		if (themeKind === ColorThemeKind.Dark) {
 			blendStr = 'lighten';
-		} else if ( themeKind === ColorThemeKind.Light ) {
+		} else if (themeKind === ColorThemeKind.Light) {
 			// console.log('浅色模式');
 			blendStr = 'multiply';
 		} else {
@@ -17,8 +15,6 @@ const bleandHelper = {
 		}
 		return blendStr;
 	}
-
-}
+};
 
 export default bleandHelper;
-
