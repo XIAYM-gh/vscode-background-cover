@@ -1,7 +1,7 @@
 {
     "name": "background-cover",
     "displayName": "background-cover",
-    "description": "Add a picture you like to cover the entire vscode background. / 添加你喜欢的图片覆盖整个vscode背景",
+    "description": "Add an image you like to cover the entire vscode background. / 添加你喜欢的图片覆盖整个vscode背景",
     "version": "2.7.0+patch.1",
     "publisher": "xiaym-gh",
     "engines": {
@@ -112,14 +112,14 @@
         }
     },
     "bugs": {
-        "url": "https://github.com/AShujiao/vscode-background-cover/issues",
-        "email": "a916817706@live.com"
+        "url": "https://github.com/XIAYM-gh/vscode-background-cover/issues",
+        "email": "xiaym123@qq.com"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/AShujiao/vscode-background-cover.git"
+        "url": "https://github.com/XIAYM-gh/vscode-background-cover.git"
     },
-    "homepage": "https://github.com/AShujiao/vscode-background-cover/blob/master/README.md#manasxx-readme",
+    "homepage": "https://github.com/XIAYM-gh/vscode-background-cover/blob/master/README.md",
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "vscode:uninstall": "node ./out/uninstall",
