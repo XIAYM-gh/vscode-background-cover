@@ -109,15 +109,6 @@
                     "description": "Image blend mode / 图片文字混合模式，对应主题模式"
                 }
             }
-        },
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "backgroundCover-explorer",
-                    "title": "backgroundCover",
-                    "icon": "resources/big.svg"
-                }
-            ]
         }
     },
     "bugs": {
