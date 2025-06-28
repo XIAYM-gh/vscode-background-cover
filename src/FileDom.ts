@@ -37,12 +37,12 @@ function sudoExec(command: string, options: any = { name: 'backgroundCover' }): 
 export class FileDom {
 	private readonly filePath: string;
 	private readonly extName = 'backgroundCover';
-	private imagePath: string;
 	private readonly imageOpacity: number;
 	private readonly sizeModel: string;
 	private readonly blur: number;
 	private readonly blendModel: string;
 	private readonly systemType: string;
+	private imagePath: string;
 	private upCssContent: string = '';
 	private bakStatus: boolean = false;
 	private bakJsContent: string = '';
@@ -122,14 +122,20 @@ export class FileDom {
 		try {
 			// 加锁
 			await new Promise((resolve, reject) => {
-				lockfile.lock(lockPath, { retries: 10, retryWait: 100 }, (err: any) => {
-					if (err) reject(err);
-					else resolve(null);
+				lockfile.lock(lockPath, { retries: 10, retryWait: 100 }, err => {
+					if (err) {
+						reject(err);
+						return;
+					}
+
+					resolve(null);
 				});
 			});
 
 			const content = this.getJs().trim();
-			if (!content) return false;
+			if (!content) {
+				return false;
+			}
 
 			const bakContent = this.clearCssContent(this.getContent(this.filePath));
 			if (this.bakStatus) {
@@ -140,11 +146,14 @@ export class FileDom {
 			return await this.saveContent(newContent);
 		} catch (error: any) {
 			await window.showErrorMessage(`Installation failed: ${error.message}`);
+
 			return false;
 		} finally {
 			// 解锁
-			lockfile.unlock(lockPath, (err: any) => {
-				if (err) console.error(`Failed to unlock ${lockPath}:`, err);
+			lockfile.unlock(lockPath, err => {
+				if (err) {
+					console.error(`Failed to unlock ${lockPath}:`, err);
+				}
 			});
 		}
 	}
@@ -252,7 +261,7 @@ export class FileDom {
 		const opacity = Math.min(this.imageOpacity, 0.8);
 
 		// 图片填充方式
-		let sizeModelVal;
+		let sizeModelVal: string | undefined;
 		let repeatVal = 'no-repeat';
 		let positionVal = 'center';
 		switch (this.sizeModel) {
@@ -306,7 +315,7 @@ export class FileDom {
 			background-size: ${sizeModelVal};
 			background-repeat: ${repeatVal};
 			background-position: ${positionVal};
-			opacity:${opacity};
+			opacity: ${opacity};
 			background-image:url('${this.imagePath}');
 			z-index: 2;
 			pointer-events: none;
