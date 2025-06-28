@@ -2,14 +2,14 @@
   <br>
     <img src="https://user-images.githubusercontent.com/14969576/61449520-b55d9900-a987-11e9-9dc9-e81fa416688c.png" alt="logo" width="200">
   <br>
-  VS Code - Background Cover (Fork)
+  VS Code - Background Cover (Simplified)
   <br>
 
   <br>
 </h1>
 
 <p align="center">
-Add an image you like to cover the entire vscode.
+Add an image you like to cover the entire vscode. Without any annoying features.
 </p>
 
 > [!WARNING]
@@ -28,7 +28,7 @@ This fork refactored most of the codebase & removed many unnecessary functionali
 
 ## Installing
 
-You can find existing VSIX from releases.
+You can find existing VSIX from GitHub Releases, or install directly from [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=xiaym-gh.background-cover-simplified).
 
 To build this extension, please:
 
@@ -46,6 +46,6 @@ Before uninstalling, please disable the background image manually!
 
 [Original Repository](https://github.com/AShujiao/vscode-background-cover)
 
-**Enjoy!**
+## Enjoy!
 
 The world is worth fighting for.
