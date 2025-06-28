@@ -71,7 +71,7 @@ export class FileDom {
 
 	private async initializeImage(): Promise<void> {
 		if (!this.imagePath.toLowerCase().startsWith('https://')) {
-			if (this.systemType === SystemType.MACOS) {
+			if (this.systemType == SystemType.MACOS) {
 				await this.imageToBase64();
 			} else {
 				this.localImgToVsc();
@@ -228,15 +228,15 @@ export class FileDom {
 			await fse.writeFile(bakFilePath, this.bakJsContent, { encoding: 'utf-8' });
 		} catch (err) {
 			// 权限不足,根据不同系统获取创建文件权限
-			if (this.systemType === SystemType.WINDOWS) {
+			if (this.systemType == SystemType.WINDOWS) {
 				// 使用cmd命令创建文件
 				await sudoExec(`echo. > "${bakFilePath}"`);
 				await sudoExec(`icacls "${bakFilePath}" /grant Users:F`);
-			} else if (this.systemType === SystemType.MACOS) {
+			} else if (this.systemType == SystemType.MACOS) {
 				// 使用命令创建文件并赋予权限
 				await sudoExec(`touch "${bakFilePath}"`);
 				await sudoExec(`chmod a+rwx "${bakFilePath}"`);
-			} else if (this.systemType === SystemType.LINUX) {
+			} else if (this.systemType == SystemType.LINUX) {
 				// 使用命令创建文件并赋予权限
 				await sudoExec(`touch "${bakFilePath}"`);
 				await sudoExec(`chmod 666 "${bakFilePath}"`);
@@ -275,30 +275,30 @@ export class FileDom {
 				sizeModelVal = 'auto';
 				repeatVal = 'repeat';
 				break;
-			case 'not_center':
+			case 'noop_center':
 				sizeModelVal = 'auto';
 				break;
-			case 'not_right_bottom':
+			case 'noop_right_bottom':
 				sizeModelVal = 'auto';
 				positionVal = 'right 96%';
 				break;
-			case 'not_right_top':
+			case 'noop_right_top':
 				sizeModelVal = 'auto';
 				positionVal = 'right 30px';
 				break;
-			case 'not_left':
+			case 'noop_left':
 				sizeModelVal = 'auto';
 				positionVal = 'left';
 				break;
-			case 'not_right':
+			case 'noop_right':
 				sizeModelVal = 'auto';
 				positionVal = 'right';
 				break;
-			case 'not_top':
+			case 'noop_top':
 				sizeModelVal = 'auto';
 				positionVal = 'top';
 				break;
-			case 'not_bottom':
+			case 'noop_bottom':
 				sizeModelVal = 'auto';
 				positionVal = 'bottom';
 				break;
@@ -337,7 +337,7 @@ export class FileDom {
 	}
 
 	private localImgToVsc(): void {
-		const separator = this.systemType === SystemType.LINUX ? '' : '/';
+		const separator = this.systemType == SystemType.LINUX ? '' : '/';
 		this.imagePath = Uri.parse(`vscode-file://vscode-app${separator}${this.imagePath}`).toString();
 	}
 
