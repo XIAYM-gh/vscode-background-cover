@@ -19,8 +19,8 @@ Add an image you like to cover the entire vscode.
 
 > **If it does not open and does not work after multiple attempts, please restore the file manually**
 >
-> - path : Microsoft VS Code\resources\app\out\vs\workbench\
-> - workbench.desktop.main.js.bak => workbench.desktop.main.js
+> - Path: Microsoft VS Code/resources/app/out/vs/workbench/
+> - Rename: workbench.desktop.main.js.bak => workbench.desktop.main.js
 
 ## Changes
 
@@ -28,20 +28,19 @@ This fork refactored most of the codebase & removed many unnecessary functionali
 
 ## Installing
 
-This fork is not officailly published.
+You can find existing VSIX from releases.
 
-To use this fork, please:
- - Clone the repository
- - Run `npm i` inside the cloned folder (or whatever tool you like)
- - Run `npx @vscode/vsce@latest package` to package the extension
- - Start VSCode, navigate to "Extensions" and click on "Install from VSIX" in the menu
- - Select the output VSIX and enjoy
+To build this extension, please:
+
+- Clone the repository
+- Run `npm i` inside the cloned folder (or whatever tool you like)
+- Run `npx @vscode/vsce@latest package` to package the extension
+- Start VSCode, navigate to "Extensions" and click on "Install from VSIX" in the menu
+- Select the output VSIX and enjoy
 
 ## Uninstalling
 
-Is the picture still there after uninstalling the extension?
-
-Then please turn off the extension manually and open vscode again, which will automatically perform the final cleaning operation and restart.
+Before uninstalling, please disable the background image manually!
 
 ## Acknowledgement
 

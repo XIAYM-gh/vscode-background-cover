@@ -94,9 +94,7 @@ export class FileDom {
 		if (!bakExist) {
 			this.bakStatus = true;
 			// 触发备份提醒用户稍等片刻
-			window.showInformationMessage(
-				`首次使用正在获取权限及备份文件，处理中... / First use is getting permission and backing up files, processing...`
-			);
+			window.showInformationMessage(`首次使用正在获取权限及备份文件，处理中... / Getting permission and backing up files, please wait...`);
 		}
 
 		const lockPath = os.tmpdir() + '/vscode-background.lock';
