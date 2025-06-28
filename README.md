@@ -2,7 +2,7 @@
   <br>
     <img src="https://user-images.githubusercontent.com/14969576/61449520-b55d9900-a987-11e9-9dc9-e81fa416688c.png" alt="logo" width="200">
   <br>
-  VS Code - Background Cover
+  VS Code - Background Cover (Fork)
   <br>
 
   <br>
@@ -14,10 +14,10 @@ Add an image you like to cover the entire vscode.
 
 > [!WARNING]
 >
-> **This extension works by editing the vscode's JS files.**  
+> **This extension works by editing the vscode's Javascript files.**  
 > Therefore, a notification will appear after installing or vscode updates. You can click on [never show again] to avoid it.
 
-> **If it does not open and does not work after multiple attempts, please restore the file manually**
+> **If it repeatedly fails, please restore the file manually.**
 >
 > - Path: Microsoft VS Code/resources/app/out/vs/workbench/
 > - Rename: workbench.desktop.main.js.bak => workbench.desktop.main.js

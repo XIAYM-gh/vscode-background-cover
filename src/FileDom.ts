@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { env, Uri, window, WorkspaceConfiguration } from 'vscode';
 import * as lockfile from 'lockfile';
-import { SudoPromptHelper } from './SudoPromptHelper';
 import * as fse from 'fs-extra';
+import * as sudo from 'sudo-prompt';
+import { env, Uri, window, WorkspaceConfiguration } from 'vscode';
 import { getContext } from './Global';
 
 const jsName: string = 'workbench.desktop.main.js';
@@ -18,6 +18,20 @@ enum SystemType {
 	WINDOWS = 'Windows_NT',
 	MACOS = 'Darwin',
 	LINUX = 'Linux'
+}
+
+function sudoExec(command: string, options: any = { name: 'backgroundCover' }): Promise<string> {
+	return new Promise((resolve, reject) => {
+		sudo.exec(command, options, (error, stdout, stderr) => {
+			if (error) {
+				reject(error);
+			} else if (stderr) {
+				reject(new Error(stderr ? stderr.toString() : ''));
+			} else {
+				resolve(stdout ? stdout.toString() : '');
+			}
+		});
+	});
 }
 
 export class FileDom {
@@ -69,18 +83,22 @@ export class FileDom {
 		// 文件是否存在
 		const isExist = await fse.pathExists(this.filePath);
 		if (!isExist) {
-			await window.showErrorMessage(`文件不存在，提醒开发者修复吧！`);
+			await window.showErrorMessage(
+				`background-cover 不支持您的 VSCode 版本，请报告此问题 / background-cover is incompatible with your version of VSCode, please report this issue.`
+			);
+
 			return false;
 		}
 
 		// 获取全局变量是否已经清除
-		let vsContext = getContext();
-		let clearCssNum = Number(vsContext.globalState.get('ext_backgroundCover_clear_v2')) || 0;
+		const vsContext = getContext();
+		const clearCssNum = Number(vsContext.globalState.get('ext_backgroundCover_clear_v2')) || 0;
 		// 尝试5次清除旧版css文件
 		if (clearCssNum <= 5) {
 			// 验证旧版css文件是否需要清除
 			const cssContent = this.getContent(cssFilePath);
-			if (this.getPatchContent(cssContent)) {
+
+			if (this.isPatched(cssContent)) {
 				// 清除旧版css文件
 				this.upCssContent = this.clearCssContent(cssContent);
 			} else {
@@ -94,7 +112,9 @@ export class FileDom {
 		if (!bakExist) {
 			this.bakStatus = true;
 			// 触发备份提醒用户稍等片刻
-			window.showInformationMessage(`首次使用正在获取权限及备份文件，处理中... / Getting permission and backing up files, please wait...`);
+			window.showInformationMessage(
+				`首次使用，正在获取权限并备份文件，请稍后... / Getting permission and backing up files, please wait...`
+			);
 		}
 
 		const lockPath = os.tmpdir() + '/vscode-background.lock';
@@ -133,14 +153,14 @@ export class FileDom {
 	public async getFilePermission(filePath: string): Promise<void> {
 		switch (this.systemType) {
 			case SystemType.WINDOWS:
-				await SudoPromptHelper.exec(`takeown /f "${filePath}" /a`);
-				await SudoPromptHelper.exec(`icacls "${filePath}" /grant Users:F`);
+				await sudoExec(`takeown /f "${filePath}" /a`);
+				await sudoExec(`icacls "${filePath}" /grant Users:F`);
 				break;
 			case SystemType.MACOS:
-				await SudoPromptHelper.exec(`chmod a+rwx "${filePath}"`);
+				await sudoExec(`chmod a+rwx "${filePath}"`);
 				break;
 			case SystemType.LINUX:
-				await SudoPromptHelper.exec(`chmod 666 "${filePath}"`);
+				await sudoExec(`chmod 666 "${filePath}"`);
 				break;
 		}
 	}
@@ -150,9 +170,11 @@ export class FileDom {
 			const content = this.clearCssContent(this.getContent(this.filePath));
 			await this.saveContent(content);
 			//await commands.executeCommand('workbench.action.reloadWindow');
+
 			return true;
 		} catch (error) {
-			await window.showErrorMessage(`卸载失败: ${error}`);
+			await window.showErrorMessage(`Uninstallation failed: ${error}`);
+
 			return false;
 		}
 	}
@@ -180,6 +202,7 @@ export class FileDom {
 				await this.getFilePermission(cssFilePath);
 				await fse.writeFile(cssFilePath, this.upCssContent, { encoding: 'utf-8' });
 			}
+
 			this.upCssContent = '';
 		}
 
@@ -198,40 +221,38 @@ export class FileDom {
 			// 权限不足,根据不同系统获取创建文件权限
 			if (this.systemType === SystemType.WINDOWS) {
 				// 使用cmd命令创建文件
-				await SudoPromptHelper.exec(`echo. > "${bakFilePath}"`);
-				await SudoPromptHelper.exec(`icacls "${bakFilePath}" /grant Users:F`);
+				await sudoExec(`echo. > "${bakFilePath}"`);
+				await sudoExec(`icacls "${bakFilePath}" /grant Users:F`);
 			} else if (this.systemType === SystemType.MACOS) {
 				// 使用命令创建文件并赋予权限
-				await SudoPromptHelper.exec(`touch "${bakFilePath}"`);
-				await SudoPromptHelper.exec(`chmod a+rwx "${bakFilePath}"`);
+				await sudoExec(`touch "${bakFilePath}"`);
+				await sudoExec(`chmod a+rwx "${bakFilePath}"`);
 			} else if (this.systemType === SystemType.LINUX) {
 				// 使用命令创建文件并赋予权限
-				await SudoPromptHelper.exec(`touch "${bakFilePath}"`);
-				await SudoPromptHelper.exec(`chmod 666 "${bakFilePath}"`);
+				await sudoExec(`touch "${bakFilePath}"`);
+				await sudoExec(`chmod 666 "${bakFilePath}"`);
 			}
+
 			await fse.writeFile(bakFilePath, this.bakJsContent, { encoding: 'utf-8' });
 		}
 	}
 
 	private getJs(): string {
-		let css = this.getCss();
-
 		return `
         /*ext-${this.extName}-start*/
         const style = document.createElement('style');
-        style.textContent = \`${css}\`;
+        style.textContent = \`${this.getCss()}\`;
         document.head.appendChild(style);
         /*ext-${this.extName}-end*/
         `;
 	}
 
 	private getCss(): string {
-		// 透明度最大0.8
-		let opacity = this.imageOpacity;
-		opacity = opacity > 0.8 ? 0.8 : opacity;
+		// 透明度最大 0.8
+		const opacity = Math.min(this.imageOpacity, 0.8);
 
 		// 图片填充方式
-		let sizeModelVal = this.sizeModel;
+		let sizeModelVal;
 		let repeatVal = 'no-repeat';
 		let positionVal = 'center';
 		switch (this.sizeModel) {
@@ -297,7 +318,7 @@ export class FileDom {
 
 	private async imageToBase64(): Promise<boolean> {
 		try {
-			const extname = path.extname(this.imagePath).substr(1);
+			const extname = path.extname(this.imagePath).substring(1);
 			const imageBuffer = await fs.promises.readFile(path.resolve(this.imagePath));
 			this.imagePath = `data:image/${extname};base64,${imageBuffer.toString('base64')}`;
 			return true;
@@ -317,11 +338,7 @@ export class FileDom {
 	}
 
 	// 获取文件里是否存在补丁样式代码
-	public getPatchContent(content: string): boolean {
-		const match = content.match(/\/\*ext-backgroundCover-start\*\/[\s\S]*?\/\*ext-backgroundCover-end\*\//g);
-		if (match) {
-			return true;
-		}
-		return false;
+	public isPatched(content: string): boolean {
+		return !!content.match(/\/\*ext-backgroundCover-start\*\/[\s\S]*?\/\*ext-backgroundCover-end\*\//g);
 	}
 }

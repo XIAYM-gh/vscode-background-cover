@@ -15,22 +15,26 @@ import { setContext } from './Global';
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
 	setContext(context);
+
 	// 创建底部按钮 - 背景图片配置
-	let backImgBtn = window.createStatusBarItem(StatusBarAlignment.Right, -999);
+	const backImgBtn = window.createStatusBarItem(StatusBarAlignment.Right, -999);
 	backImgBtn.text = '$(file-media)';
 	backImgBtn.command = 'extension.backgroundCover.start';
 	backImgBtn.tooltip = 'Switch background image / 切换背景图';
 	PickList.autoUpdateBackground();
 	backImgBtn.show();
 
-	let randomCommand = commands.registerCommand('extension.backgroundCover.refresh', () => {
-		PickList.randomUpdateBackground();
-	});
-	let startCommand = commands.registerCommand('extension.backgroundCover.start', () => {
-		PickList.createItemList();
-	});
-	context.subscriptions.push(startCommand);
-	context.subscriptions.push(randomCommand);
+	context.subscriptions.push(
+		commands.registerCommand('extension.backgroundCover.start', () => {
+			PickList.createItemList();
+		})
+	);
+
+	context.subscriptions.push(
+		commands.registerCommand('extension.backgroundCover.refresh', () => {
+			PickList.randomUpdateBackground();
+		})
+	);
 
 	// 监听主题变化
 	window.onDidChangeActiveColorTheme(() => {

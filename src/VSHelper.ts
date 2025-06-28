@@ -22,6 +22,7 @@ const vsHelp = {
 			if (!item) {
 				return;
 			}
+
 			commands.executeCommand('workbench.action.reloadWindow');
 		});
 	}
