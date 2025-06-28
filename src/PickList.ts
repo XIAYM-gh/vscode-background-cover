@@ -18,7 +18,6 @@ import {
 import { FileDom } from './FileDom';
 import { ImgItem } from './ImgItem';
 import { getContext } from './Global';
-import vsHelp from './VSHelper';
 import bleandHelper from './BleandHelper';
 
 export class PickList {
@@ -238,7 +237,7 @@ export class PickList {
 				this.setConfigValue('autoStatus', false, false);
 				this.quickPick.hide();
 
-				vsHelp.showInfo('Successfully disabled start-up replacement / 成功禁用自动切换背景图');
+				window.showInformationMessage('Successfully disabled start-up replacement / 成功禁用自动切换背景图');
 				break;
 			case 11:
 				if (!this.config.randomImageFolder) {
@@ -248,7 +247,7 @@ export class PickList {
 				}
 
 				this.quickPick.hide();
-				vsHelp.showInfo('Successfully enabled start-up replacement / 成功启用自动切换背景图');
+				window.showInformationMessage('Successfully enabled start-up replacement / 成功启用自动切换背景图');
 				break;
 			case 13:
 				this.gotoPath(path);
@@ -544,7 +543,7 @@ export class PickList {
 
 	private setSizeModel(value?: string) {
 		if (!value) {
-			return vsHelp.showInfo('No parameter value was obtained / 未获取到参数值');
+			return window.showInformationMessage('No parameter value was obtained / 未获取到参数值');
 		}
 
 		this.setConfigValue('sizeModel', value, true);
@@ -557,7 +556,7 @@ export class PickList {
 	// 更新配置
 	public updateBackgound(path?: string) {
 		if (!path) {
-			return vsHelp.showInfo('Invalid image path provided / 未获取到图片路径');
+			return window.showInformationMessage('Invalid image path provided / 未获取到图片路径');
 		}
 
 		this.setConfigValue('imagePath', path);
