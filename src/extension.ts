@@ -19,14 +19,14 @@ export function activate(context: ExtensionContext) {
 	// 创建底部按钮 - 背景图片配置
 	const backImgBtn = window.createStatusBarItem(StatusBarAlignment.Right, -999);
 	backImgBtn.text = '$(file-media)';
-	backImgBtn.command = 'extension.backgroundCover.start';
+	backImgBtn.command = 'extension.backgroundCover.openMenu';
 	backImgBtn.tooltip = 'Switch background image / 切换背景图';
 	PickList.autoUpdateBackground();
 	backImgBtn.show();
 
 	context.subscriptions.push(
-		commands.registerCommand('extension.backgroundCover.start', () => {
-			PickList.createItemList();
+		commands.registerCommand('extension.backgroundCover.openMenu', () => {
+			PickList.createItemListAndShow();
 		})
 	);
 

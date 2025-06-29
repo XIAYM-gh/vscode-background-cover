@@ -26,6 +26,12 @@ Add an image you like to cover the entire vscode. Without any annoying features.
 
 This fork refactored most of the codebase & removed many unnecessary functionalities.
 
+We:
+
+- Simplified the codebase
+- Made the language proper & more understandable
+- Added support for multiple folders
+
 ## Installing
 
 You can find existing VSIX from GitHub Releases, or install directly from [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=xiaym-gh.background-cover-simplified).

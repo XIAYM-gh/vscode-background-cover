@@ -31,16 +31,12 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.backgroundCover.start",
-                "title": "backgroundCover - start"
+                "command": "extension.backgroundCover.openMenu",
+                "title": "backgroundCover - Open Main Menu"
             },
             {
                 "command": "extension.backgroundCover.refresh",
-                "title": "backgroundCover - refresh"
-            },
-            {
-                "command": "extension.backgroundCover.nest",
-                "title": "backgroundCover - nest"
+                "title": "backgroundCover - Refresh"
             }
         ],
         "keybindings": [
@@ -50,38 +46,38 @@
             }
         ],
         "configuration": {
-            "title": "background-cover config",
+            "title": "background-cover Config",
             "properties": {
                 "backgroundCover.opacity": {
                     "type": "number",
                     "maximum": 0.8,
                     "minimum": 0,
                     "default": 0.2,
-                    "description": "Background opacity / 背景透明度 (0 - 0.8)"
+                    "description": "CSS Opacity of the Background Image / 背景 CSS 透明度 (0 - 0.8)"
                 },
-                "backgroundCover.blur": {
+                "backgroundCover.blurStrength": {
                     "type": "number",
                     "maximum": 100,
                     "minimum": 0,
                     "default": 0,
-                    "description": "Background blur strength / 背景模糊强度 (0 - 100)"
+                    "description": "Background Blur Strength / 背景模糊强度 (0 - 100)"
                 },
                 "backgroundCover.imagePath": {
                     "type": "string",
                     "default": "",
-                    "description": "Background image path / 背景图片路径"
+                    "description": "Current Background Image Path / 背景图片路径"
                 },
-                "backgroundCover.randomImageFolder": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Random images folder / 图片目录"
+                "backgroundCover.randomImageFolders": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Images Folders Added by User / 图片目录"
                 },
-                "backgroundCover.autoStatus": {
+                "backgroundCover.changeOnStartup": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Automatically change on start / 每次启动时随机自动更换背景"
+                    "description": "Automatically Switch Image Randomly on Start-up / 每次启动时随机更换背景"
                 },
-                "backgroundCover.sizeModel": {
+                "backgroundCover.sizeMode": {
                     "type": "string",
                     "enum": [
                         "cover",
@@ -96,17 +92,7 @@
                         "noop_bottom"
                     ],
                     "default": "cover",
-                    "description": "Image size adaptive mode / 图片尺寸适应模式"
-                },
-                "backgroundCover.blendModel": {
-                    "type": "string",
-                    "enum": [
-                        "auto",
-                        "multiply",
-                        "lighten"
-                    ],
-                    "default": "cover",
-                    "description": "Image blend mode / 图片文字混合模式，对应主题模式"
+                    "description": "Image Size Adaptive Mode / 图片尺寸适应模式"
                 }
             }
         }
@@ -129,11 +115,11 @@
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
         "@types/lockfile": "^1.0.4",
-        "@types/mocha": "^5.2.7",
-        "@types/node": "^22.15.33",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^22.15.34",
         "@types/vscode": "^1.101.0",
         "tsup": "^8.5.0",
-        "typescript": "^4.9.5"
+        "typescript": "^5.8.3"
     },
     "dependencies": {
         "async-mutex": "^0.5.0",

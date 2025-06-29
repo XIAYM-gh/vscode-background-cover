@@ -21,6 +21,9 @@ import bleandHelper from './BleandHelper';
 export class PickList {
 	public static itemList: PickList | undefined;
 
+	// 目录列表
+	private static imageFolders: string[] = [];
+
 	// 下拉列表
 	private readonly quickPick: QuickPick<ListItem> | any;
 
@@ -39,15 +42,17 @@ export class PickList {
 	private imageFileType: ImageFileType;
 
 	// 当前配置的背景图尺寸适配模式
-	private sizeModel: string;
+	private sizeMode: string;
 
 	private blurStrength: number;
 
 	private randUpdate: boolean = false;
 
 	// 初始下拉列表
-	public static createItemList() {
+	public static createItemListAndShow() {
 		const config: WorkspaceConfiguration = workspace.getConfiguration('backgroundCover');
+		this.imageFolders = config.get('randomImageFolders')!;
+
 		const list: QuickPick<ListItem> = window.createQuickPick<ListItem>();
 		list.placeholder = 'What is your command? / 君欲何为？';
 		list.totalSteps = 2;
@@ -58,9 +63,9 @@ export class PickList {
 				operation: OperationType.SELECT_IMAGE
 			},
 			{
-				label: '$(file-directory) Set Images Directory',
-				description: '设置图片目录',
-				operation: OperationType.SET_DIRECTORY
+				label: '$(file-directory) Manage Images Folders',
+				description: '管理图片目录',
+				operation: OperationType.MANAGE_FOLDERS
 			},
 			{
 				label: '$(settings) Set Background Opacity',
@@ -89,7 +94,7 @@ export class PickList {
 			}
 		];
 
-		if (config.autoStatus) {
+		if (config.changeOnStartup) {
 			items.push({
 				label: '$(sync) Disable Start-up Replacement',
 				description: '关闭启动自动更换',
@@ -148,7 +153,7 @@ export class PickList {
 	 */
 	public static autoUpdateBackground() {
 		const config = workspace.getConfiguration('backgroundCover');
-		if (!config.randomImageFolder || !config.autoStatus) {
+		if (!PickList.imageFolders.length || !config.changeOnStartup) {
 			return false;
 		}
 
@@ -162,7 +167,7 @@ export class PickList {
 	 */
 	public static randomUpdateBackground() {
 		const config = workspace.getConfiguration('backgroundCover');
-		if (!config.randomImageFolder) {
+		if (!config.randomImageFolders) {
 			window.showWarningMessage('Please set the images directory first! / 请先设置图片目录！');
 			return false;
 		}
@@ -179,9 +184,9 @@ export class PickList {
 		this.config = config;
 		this.imgPath = config.imagePath;
 		this.opacity = config.opacity;
-		this.sizeModel = config.sizeModel || 'cover';
+		this.sizeMode = config.sizeMode || 'cover';
 		this.imageFileType = ImageFileType.UNASSIGNED;
-		this.blurStrength = config.blur;
+		this.blurStrength = config.blurStrength;
 
 		if (pickList) {
 			this.quickPick = pickList;
@@ -198,18 +203,16 @@ export class PickList {
 	private listChange(type: OperationType, attachment?: any) {
 		switch (type) {
 			case OperationType.SELECT_IMAGE:
-				this.showImgSelectionList();
+				this.showImgSelectionMenu();
 				break;
-			case OperationType.SET_DIRECTORY:
-				this.selectFileAndUpdate(FilePickerType.FOLDER);
+			case OperationType.MANAGE_FOLDERS:
+				this.showFoldersMenu();
 				break;
 			case OperationType.IMAGE_MANUAL_SELECTION:
 				this.selectFileAndUpdate(FilePickerType.FILE);
 				break;
 			case OperationType.IMAGE_RANDOM_SELECTION:
-				const files: string[] = this.getFolderImgList(attachment);
-				const randomFile = files[Math.floor(Math.random() * files.length)];
-				this.updateBackground(path.join(attachment, randomFile));
+				this.autoUpdateBackground();
 				break;
 			case OperationType.HANDLE_SELECT_IMAGE:
 				this.updateBackground(attachment);
@@ -238,20 +241,29 @@ export class PickList {
 				break;
 
 			case OperationType.DISABLE_AUTO_REPLACEMENT:
-				this.setConfigValue('autoStatus', false, false);
+				this.setConfigValue('changeOnStartup', false, false);
 				this.quickPick.hide();
 
 				window.showInformationMessage('Successfully disabled start-up replacement / 成功禁用自动切换背景图');
 				break;
 			case OperationType.ENABLE_AUTO_REPLACEMENT:
-				if (!this.config.randomImageFolder) {
+				if (!this.config.randomImageFolders) {
 					window.showWarningMessage('Please add a directory first! / 请添加目录后再来开启！');
 				} else {
-					this.setConfigValue('autoStatus', true, false);
+					this.setConfigValue('changeOnStartup', true, false);
 				}
 
 				this.quickPick.hide();
 				window.showInformationMessage('Successfully enabled start-up replacement / 成功启用自动切换背景图');
+				break;
+
+			case OperationType.FOLDERS_ADD:
+				this.selectFileAndUpdate(FilePickerType.FOLDER);
+				break;
+			case OperationType.FOLDERS_REMOVE:
+				const value = PickList.imageFolders.filter(it => it != attachment);
+				this.setConfigValue('randomImageFolders', value, false);
+				this.showFoldersMenu();
 				break;
 
 			case OperationType.RELOAD_YES:
@@ -267,61 +279,61 @@ export class PickList {
 		const items: ListItem[] = [
 			{
 				label: '$(diff-ignored) Fill (default)',
-				description: '填充 (默认) ' + (this.sizeModel == 'cover' ? '$(check)' : ''),
+				description: '填充 (默认) ' + (this.sizeMode == 'cover' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'cover'
 			},
 			{
 				label: '$(layout-menubar) Repeat',
-				description: '平铺' + (this.sizeModel == 'repeat' ? '$(check)' : ''),
+				description: '平铺' + (this.sizeMode == 'repeat' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'repeat'
 			},
 			{
 				label: '$(diff-added) Contain',
-				description: '拉伸' + (this.sizeModel == 'contain' ? '$(check)' : ''),
+				description: '拉伸' + (this.sizeMode == 'contain' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'contain'
 			},
 			{
 				label: '$(diff-modified) Noop (center)',
-				description: '无适应 (居中)' + (this.sizeModel == 'noop_center' ? '$(check)' : ''),
+				description: '无适应 (居中)' + (this.sizeMode == 'noop_center' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_center'
 			},
 			{
 				label: '$(layout) Noop (bottom right)',
-				description: '无适应 (右下角)' + (this.sizeModel == 'noop_right_bottom' ? '$(check)' : ''),
+				description: '无适应 (右下角)' + (this.sizeMode == 'noop_right_bottom' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_right_bottom'
 			},
 			{
 				label: '$(layout) Noop (top right)',
-				description: '无适应 (右上角)' + (this.sizeModel == 'noop_right_top' ? '$(check)' : ''),
+				description: '无适应 (右上角)' + (this.sizeMode == 'noop_right_top' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_right_top'
 			},
 			{
 				label: '$(layout) Noop (left)',
-				description: '无适应 (靠左)' + (this.sizeModel == 'noop_left' ? '$(check)' : ''),
+				description: '无适应 (靠左)' + (this.sizeMode == 'noop_left' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_left'
 			},
 			{
 				label: '$(layout) Noop (right)',
-				description: '无适应 (靠右)' + (this.sizeModel == 'noop_right' ? '$(check)' : ''),
+				description: '无适应 (靠右)' + (this.sizeMode == 'noop_right' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_right'
 			},
 			{
 				label: '$(layout) Noop (top)',
-				description: '无适应 (靠上)' + (this.sizeModel == 'noop_top' ? '$(check)' : ''),
+				description: '无适应 (靠上)' + (this.sizeMode == 'noop_top' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_top'
 			},
 			{
 				label: '$(layout) Noop (bottom)',
-				description: '无适应 (靠下)' + (this.sizeModel == 'noop_bottom' ? '$(check)' : ''),
+				description: '无适应 (靠下)' + (this.sizeMode == 'noop_bottom' ? '$(check)' : ''),
 				operation: OperationType.HANDLE_ADAPTATION_MODE,
 				attachment: 'noop_bottom'
 			}
@@ -346,61 +358,96 @@ export class PickList {
 	}
 
 	/**
-	 * 启动时自动更新背景
+	 * 启动时自动更新背景 / 随机更新背景图
 	 */
 	private autoUpdateBackground() {
-		if (this.checkFolder(this.config.randomImageFolder)) {
-			// 获取目录下的所有图片
-			const files: string[] = this.getFolderImgList(this.config.randomImageFolder);
-
-			// 是否存在图片
-			if (files.length > 0) {
-				// 获取一个随机路径存入数组中
-				const randomFile = files[Math.floor(Math.random() * files.length)];
-				const file = path.join(this.config.randomImageFolder, randomFile);
-				this.listChange(OperationType.HANDLE_SELECT_IMAGE, file);
+		const files: string[] = [];
+		for (let folder of this.config.randomImageFolders) {
+			if (!this.checkFolder(folder)) {
+				continue;
 			}
+
+			files.push(...this.getFolderImgList(folder).map(image => path.join(folder, image)));
 		}
 
-		return true;
+		// 是否存在图片
+		if (files.length > 0) {
+			// 获取一个随机路径存入数组中
+			const randomFile = files[Math.floor(Math.random() * files.length)];
+			this.listChange(OperationType.HANDLE_SELECT_IMAGE, randomFile);
+		}
 	}
 
 	// 根据图片目录展示图片列表
-	private showImgSelectionList(anotherPath?: string) {
+	private showImgSelectionMenu() {
 		const items: ListItem[] = [
 			{
 				label: '$(diff-added) Manual selection from Disk',
 				description: '从本地手动选取一张背景图',
 				operation: OperationType.IMAGE_MANUAL_SELECTION
+			},
+			{
+				label: '$(light-bulb) Random selection',
+				description: '随机自动选择 (Ctrl + Shift + F7)',
+				operation: OperationType.IMAGE_RANDOM_SELECTION
+			},
+			{
+				label: '',
+				description: '',
+				operation: OperationType.NOOP,
+				kind: QuickPickItemKind.Separator
 			}
 		];
 
-		const folder = anotherPath ?? this.config.randomImageFolder;
-		if (this.checkFolder(folder)) {
+		const folders: string[] = this.config.randomImageFolders;
+		for (let folder of folders) {
+			if (!this.checkFolder(folder)) {
+				continue;
+			}
+
 			// 获取目录下的所有图片
 			const files: string[] = this.getFolderImgList(folder);
 
 			// 是否存在图片
 			if (files.length > 0) {
 				items.push(
-					{
-						label: '$(light-bulb) Random selection',
-						description: '随机自动选择 (Ctrl + Shift + F7)',
-						operation: OperationType.IMAGE_RANDOM_SELECTION,
-						attachment: folder
-					},
-					{
-						label: '',
-						description: '',
-						operation: OperationType.NOOP,
-						kind: QuickPickItemKind.Separator
-					},
-					...files.map(it => new ListItem('$(tag) ' + it, it, OperationType.HANDLE_SELECT_IMAGE, path.join(folder, it)))
+					...files.map(it => new ListItem('$(tag) ' + it, path.basename(folder), OperationType.HANDLE_SELECT_IMAGE, path.join(folder, it)))
 				);
 			}
 		}
 
 		this.quickPick.items = items;
+		this.quickPick.show();
+	}
+
+	// 目录管理
+	private showFoldersMenu() {
+		const items: ListItem[] = [
+			{
+				label: '$(file-directory-create) Add a Folder',
+				description: '添加目录',
+				operation: OperationType.FOLDERS_ADD
+			},
+			{
+				label: '',
+				description: '',
+				operation: OperationType.NOOP,
+				kind: QuickPickItemKind.Separator
+			}
+		];
+
+		for (let folder of PickList.imageFolders) {
+			const result = this.checkFolder(folder);
+			items.push({
+				label: '$(file-directory) ' + path.basename(folder),
+				description: (result ? '' : '[Invalid] ') + path.resolve(folder),
+				operation: OperationType.FOLDERS_REMOVE,
+				attachment: folder
+			});
+		}
+
+		this.quickPick.items = items;
+		this.quickPick.placeholder = 'Click on a folder to remove / 点击目录以移除';
 		this.quickPick.show();
 	}
 
@@ -477,7 +524,7 @@ export class PickList {
 			}
 
 			// 保存配置
-			const keyArr = ['imagePath', 'opacity', 'blur'];
+			const keyArr = ['imagePath', 'opacity', 'blurStrength'];
 			this.setConfigValue(keyArr[type], type == InputBoxType.IMAGE_FROM_URL ? value : parseFloat(value), true);
 		});
 	}
@@ -487,7 +534,7 @@ export class PickList {
 			return window.showInformationMessage('No parameter value was obtained / 未获取到参数值');
 		}
 
-		this.setConfigValue('sizeModel', value, true);
+		this.setConfigValue('sizeMode', value, true);
 	}
 
 	// 更新配置
@@ -516,8 +563,9 @@ export class PickList {
 
 		const { fsPath } = folderUris[0];
 		if (type == FilePickerType.FOLDER) {
-			this.setConfigValue('randomImageFolder', fsPath, false);
-			this.showImgSelectionList(fsPath);
+			const value = [...new Set([fsPath, ...PickList.imageFolders])];
+			this.setConfigValue('randomImageFolders', value, false);
+			this.showFoldersMenu();
 			return;
 		}
 
@@ -534,11 +582,14 @@ export class PickList {
 			case 'imagePath':
 				this.imgPath = value;
 				break;
-			case 'sizeModel':
-				this.sizeModel = value;
+			case 'sizeMode':
+				this.sizeMode = value;
 				break;
-			case 'blur':
+			case 'blurStrength':
 				this.blurStrength = value;
+				break;
+			case 'randomImageFolders':
+				PickList.imageFolders = value;
 				break;
 		}
 
@@ -564,7 +615,7 @@ export class PickList {
 		getContext().globalState.update('backgroundCoverBlendModel', colorThemeKind);
 
 		// 写入文件
-		const dom = new FileDom(this.config, this.imgPath, this.opacity, this.sizeModel, this.blurStrength, colorThemeKind);
+		const dom = new FileDom(this.imgPath, this.opacity, this.sizeMode, this.blurStrength, colorThemeKind);
 		let result = false;
 
 		try {

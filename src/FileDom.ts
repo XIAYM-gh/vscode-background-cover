@@ -38,32 +38,22 @@ export class FileDom {
 	private readonly filePath: string;
 	private readonly extName = 'backgroundCover';
 	private readonly imageOpacity: number;
-	private readonly sizeModel: string;
+	private readonly sizeMode: string;
 	private readonly blur: number;
-	private readonly blendModel: string;
+	private readonly blendingMode: string;
 	private readonly systemType: string;
 	private imagePath: string;
 	private upCssContent: string = '';
 	private bakStatus: boolean = false;
 	private bakJsContent: string = '';
-	private workConfig: WorkspaceConfiguration;
 
-	constructor(
-		workConfig: WorkspaceConfiguration,
-		imagePath: string,
-		opacity: number,
-		sizeModel: string = 'cover',
-		blur: number = 0,
-		blendModel: string = ''
-	) {
-		this.workConfig = workConfig;
-		this.blendModel = blendModel || this.workConfig.get('blendModel', '');
+	constructor(imagePath: string, opacity: number, sizeMode: string = 'cover', blur: number = 0, blendingMode: string = '') {
 		this.filePath = jsFilePath;
 		this.imagePath = imagePath;
 		this.imageOpacity = Math.min(opacity, 0.8);
-		this.sizeModel = sizeModel || 'cover';
+		this.sizeMode = sizeMode || 'cover';
 		this.blur = blur;
-		this.blendModel = blendModel;
+		this.blendingMode = blendingMode;
 		this.systemType = os.type();
 
 		this.initializeImage();
@@ -261,45 +251,45 @@ export class FileDom {
 		const opacity = Math.min(this.imageOpacity, 0.8);
 
 		// 图片填充方式
-		let sizeModelVal: string | undefined;
+		let sizeModeVal: string | undefined;
 		let repeatVal = 'no-repeat';
 		let positionVal = 'center';
-		switch (this.sizeModel) {
+		switch (this.sizeMode) {
 			case 'cover':
-				sizeModelVal = 'cover';
+				sizeModeVal = 'cover';
 				break;
 			case 'contain':
-				sizeModelVal = '100% 100%';
+				sizeModeVal = '100% 100%';
 				break;
 			case 'repeat':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				repeatVal = 'repeat';
 				break;
 			case 'noop_center':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				break;
 			case 'noop_right_bottom':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				positionVal = 'right 96%';
 				break;
 			case 'noop_right_top':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				positionVal = 'right 30px';
 				break;
 			case 'noop_left':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				positionVal = 'left';
 				break;
 			case 'noop_right':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				positionVal = 'right';
 				break;
 			case 'noop_top':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				positionVal = 'top';
 				break;
 			case 'noop_bottom':
-				sizeModelVal = 'auto';
+				sizeModeVal = 'auto';
 				positionVal = 'bottom';
 				break;
 		}
@@ -312,7 +302,7 @@ export class FileDom {
 			width: 100%;
 			height: 100%;
 			position: absolute;
-			background-size: ${sizeModelVal};
+			background-size: ${sizeModeVal};
 			background-repeat: ${repeatVal};
 			background-position: ${positionVal};
 			opacity: ${opacity};
@@ -320,7 +310,7 @@ export class FileDom {
 			z-index: 2;
 			pointer-events: none;
 			filter: blur(${this.blur}px);
-			mix-blend-mode: ${this.blendModel};
+			mix-blend-mode: ${this.blendingMode};
 		}
 		`;
 	}

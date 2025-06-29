@@ -6,7 +6,7 @@ export enum OperationType {
 
 	// Main menu
 	SELECT_IMAGE = 1001,
-	SET_DIRECTORY = 1002,
+	MANAGE_FOLDERS = 1002,
 	SET_OPACITY = 1003,
 	SET_BLUR_STRENGTH = 1004,
 	SET_ADAPTATION_MODE = 1005,
@@ -21,7 +21,11 @@ export enum OperationType {
 	HANDLE_SELECT_IMAGE = 2003,
 
 	// Image size adaptation menu
-	HANDLE_ADAPTATION_MODE = 3001
+	HANDLE_ADAPTATION_MODE = 3001,
+
+	// Folders Management Menu
+	FOLDERS_ADD = 4001,
+	FOLDERS_REMOVE = 4002
 }
 
 export enum ImageFileType {
