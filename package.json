@@ -2,7 +2,7 @@
     "name": "background-cover",
     "displayName": "background-cover",
     "description": "Add an image you like to cover the entire vscode background. / 添加你喜欢的图片覆盖整个vscode背景",
-    "version": "2.7.0+patch.3",
+    "version": "2.7.0+patch.4",
     "publisher": "xiaym-gh",
     "engines": {
         "vscode": "^1.101.0"
