@@ -7,7 +7,7 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { commands, window, ExtensionContext, StatusBarAlignment } from 'vscode';
+import { commands, window, ExtensionContext, StatusBarAlignment, workspace } from 'vscode';
 import { PickList } from './PickList';
 import { setContext } from './Global';
 
@@ -23,6 +23,9 @@ export function activate(context: ExtensionContext) {
 	backImgBtn.tooltip = 'Switch background image / 切换背景图';
 	PickList.autoUpdateBackground();
 	backImgBtn.show();
+
+	// Initialize only once!
+	PickList.imageFolders = workspace.getConfiguration('backgroundCover').randomImageFolders;
 
 	context.subscriptions.push(
 		commands.registerCommand('extension.backgroundCover.openMenu', () => {

@@ -22,7 +22,7 @@ export class PickList {
 	public static itemList: PickList | undefined;
 
 	// 目录列表
-	private static imageFolders: string[] = [];
+	public static imageFolders: string[] = [];
 
 	// 下拉列表
 	private readonly quickPick: QuickPick<ListItem> | any;
@@ -51,8 +51,6 @@ export class PickList {
 	// 初始下拉列表
 	public static createItemListAndShow() {
 		const config: WorkspaceConfiguration = workspace.getConfiguration('backgroundCover');
-		this.imageFolders = config.get('randomImageFolders')!;
-
 		const list: QuickPick<ListItem> = window.createQuickPick<ListItem>();
 		list.placeholder = 'What is your command? / 君欲何为？';
 		list.totalSteps = 2;
