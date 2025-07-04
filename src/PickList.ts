@@ -77,7 +77,7 @@ export class PickList {
 			},
 			{
 				label: '$(layout) Image Size Adaptive Mode',
-				description: '尺寸适应模式',
+				description: '尺寸适配模式',
 				operation: OperationType.SET_ADAPTATION_MODE
 			},
 			{
@@ -132,7 +132,7 @@ export class PickList {
 		// 弹出提示框确认是否重启
 		window
 			.showInformationMessage(
-				'The appearance mode has changed, would you like to update the background blending mode? / 主题模式发生变更，是否更新背景混合模式？',
+				'The appearance mode has changed, would you like to update the background blending mode? / 主题模式已变更，是否更新背景混合模式？',
 				'YES',
 				'NO'
 			)
@@ -242,17 +242,17 @@ export class PickList {
 				this.setConfigValue('changeOnStartup', false, false);
 				this.quickPick.hide();
 
-				window.showInformationMessage('Successfully disabled start-up replacement / 成功禁用自动切换背景图');
+				window.showInformationMessage('Successfully disabled start-up replacement / 已禁用自动切换背景图');
 				break;
 			case OperationType.ENABLE_AUTO_REPLACEMENT:
 				if (!this.config.randomImageFolders) {
-					window.showWarningMessage('Please add a directory first! / 请添加目录后再来开启！');
+					window.showWarningMessage('Please add a directory first! / 请先添加目录后再开启！');
 				} else {
 					this.setConfigValue('changeOnStartup', true, false);
 				}
 
 				this.quickPick.hide();
-				window.showInformationMessage('Successfully enabled start-up replacement / 成功启用自动切换背景图');
+				window.showInformationMessage('Successfully enabled start-up replacement / 已启用自动切换背景图');
 				break;
 
 			case OperationType.FOLDERS_ADD:
@@ -445,7 +445,7 @@ export class PickList {
 		}
 
 		this.quickPick.items = items;
-		this.quickPick.placeholder = 'Click on a folder to remove / 点击目录以移除';
+		this.quickPick.placeholder = 'Click a folder to remove / 点击目录以移除';
 		this.quickPick.show();
 	}
 
@@ -475,15 +475,15 @@ export class PickList {
 	// 创建一个输入框
 	private showInputBox(type: InputBoxType) {
 		const placeStringArr: string[] = [
-			'Please enter the image path, supporting local path and HTTPS',
-			'Image CSS Opacity: 0.00 - 1, current: ' + this.opacity,
+			'Enter Image path (Local or HTTPS)',
+			'Image opacity: 0.00 - 1, current: ' + this.opacity,
 			'Image blur strength: 0 - 100, current: ' + this.blurStrength
 		];
 
 		const promptStringArr: string[] = [
-			'请输入图片路径，支持本地路径和 HTTPS',
-			'图片不透明度：0 - 0.8, 当前值：' + this.opacity,
-			'图片模糊度：0 - 100, 当前值：' + this.blurStrength
+			'请输入图片路径（本地或 HTTPS）',
+			'图片不透明度：0 - 0.8，当前值：' + this.opacity,
+			'图片模糊度：0 - 100，当前值：' + this.blurStrength
 		];
 
 		const placeHolder = placeStringArr[type];
@@ -510,7 +510,7 @@ export class PickList {
 			} else if (type == InputBoxType.SET_OPACITY) {
 				const opacity = parseFloat(value);
 				if (opacity < 0 || opacity > 0.8 || isNaN(opacity)) {
-					window.showWarningMessage('The opacity value must be between 0 and 0.8!');
+					window.showWarningMessage('The opacity value must be between 0 and 0.8! / 不透明度必须在 0 到 0.8 之间！');
 					return false;
 				}
 			} else if (type == InputBoxType.SET_BLUR_STRENGTH) {
@@ -641,7 +641,7 @@ export class PickList {
 				} else {
 					if (this.imageFileType == ImageFileType.HTTPS) {
 						// 弹出提示框确认是否重启
-						const value = await window.showInformationMessage(`"${this.imgPath}" | Reloading takes effect? / 重新加载生效？`, 'YES', 'NO');
+						const value = await window.showInformationMessage(`"${this.imgPath}" | Reload to take effect? / 重新加载生效？`, 'YES', 'NO');
 						if (value == 'YES') {
 							await commands.executeCommand('workbench.action.reloadWindow');
 						}
