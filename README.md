@@ -14,8 +14,8 @@ Add an image you like to cover the entire vscode. Without any annoying features.
 
 > [!WARNING]
 >
-> **This extension modifies VS Code's JavaScript files.**  
-> As a result, you may see a notification after installation or when VS Code updates. You can click [never show again] to dismiss it.
+> **This extension works by editing the vscode's Javascript files.**  
+> Therefore, a notification will appear after installing or vscode updates. You can click on [never show again] to avoid it.
 
 > **If it repeatedly fails, please restore the file manually.**
 >
@@ -24,29 +24,29 @@ Add an image you like to cover the entire vscode. Without any annoying features.
 
 ## Changes
 
-This fork refactors most of the codebase & removes unnecessary features.
+This fork refactored most of the codebase & removed many unnecessary functionalities.
 
-We have:
+We:
 
 - Simplified the codebase
 - Made the language proper & more understandable
 - Added support for multiple folders
 
-## Installation
+## Installing
 
-You can download a pre-built VSIX from GitHub Releases, or install directly from the [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=xiaym-gh.background-cover-simplified).
+You can find existing VSIX from GitHub Releases, or install directly from [VS Marketplace](https://marketplace.visualstudio.com/items?itemName=xiaym-gh.background-cover-simplified).
 
-To build the extension yourself:
+To build this extension, please:
 
-- Clone this repository
-- Run `npm i` in the project directory (or use your preferred package manager)
+- Clone the repository
+- Run `npm i` inside the cloned folder (or whatever tool you like)
 - Run `npx @vscode/vsce@latest package` to package the extension
-- Open VS Code, go to "Extensions", and select "Install from VSIX" from the menu
-- Choose the generated VSIX file and enjoy!
+- Start VSCode, navigate to "Extensions" and click on "Install from VSIX" in the menu
+- Select the output VSIX and enjoy
 
-## Uninstallation
+## Uninstalling
 
-Before uninstalling, please manually disable the background image.
+Before uninstalling, please disable the background image manually!
 
 ## Acknowledgement
 

@@ -1,10 +1,3 @@
-/*
- * @Description:
- * @Author: czw
- * @Date: 2023-08-25 10:00:03
- * @FilePath: \vscode-background-cover\src\extension.ts
- */
-
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { commands, window, ExtensionContext, StatusBarAlignment, workspace } from 'vscode';

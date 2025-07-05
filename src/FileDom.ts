@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as lockfile from 'lockfile';
 import * as fse from 'fs-extra';
 import * as sudo from 'sudo-prompt';
-import { env, Uri, window, WorkspaceConfiguration } from 'vscode';
+import { env, Uri, window } from 'vscode';
 import { getContext } from './Global';
 
 const jsName: string = 'workbench.desktop.main.js';
